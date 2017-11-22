@@ -109,3 +109,4 @@ node_modules
 *.txt
 scraper/contents/*.json
 __*.*
+settings.js
