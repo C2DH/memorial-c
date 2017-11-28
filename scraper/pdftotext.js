@@ -44,7 +44,7 @@ let q = async.queue((pdf, next) => {
   
   console.log('  ... done. Remaining:',  q.length(), '\n- sleep (ms):', wait);
 
-  const ls = spawn('pdftotext', (['-nopgbrk']).concat([path.join(settings.paths.contents, filepath)]));
+  const ls = spawn('pdftotext', (['-nopgbrk', '-enc', 'UTF-8']).concat([path.join(settings.paths.contents, filepath)]));
 
   ls.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
