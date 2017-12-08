@@ -48,6 +48,7 @@ module.exports = [
             })
           }).then(res => {
             console.log(_gr('    v '), _bb('success.',eta.format('{{progress}}/1 eta: {{etah}}, elapsed: {{elapsed}} s')));
+            memorial.queue = []
             eta.iterate()
             lr.resume();
           }).catch(next)
