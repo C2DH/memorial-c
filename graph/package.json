@@ -13,6 +13,8 @@
     "cli-color": "^1.2.0",
     "decypher": "^0.13.0",
     "glob": "^7.1.2",
-    "neo4j-driver": "^1.5.0"
+    "line-by-line": "^0.1.5",
+    "neo4j-driver": "^1.5.0",
+    "node-eta": "^0.9.0"
   }
 }

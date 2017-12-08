@@ -110,3 +110,4 @@ node_modules
 scraper/contents/*.json
 __*.*
 settings.js
+package-lock.json
