@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "storereports": "TASK=store_reports node index.js"
+    "store_records": "TASK=store_records nohup node index.js > store_records.log 2>&1 &"
   },
   "author": "",
   "license": "ISC",
