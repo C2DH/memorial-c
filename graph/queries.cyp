@@ -6,6 +6,8 @@ CREATE CONSTRAINT ON (rec:record) ASSERT rec.uid  IS UNIQUE
 // name: create_record
 //
 MERGE (rec:record {Project:'memorialc', uid:{record_uid}})
+ON CREATE
+  set rec.type = {type}
 WITH rec
 MATCH (mem:memo {Project:'memorialc', uid:{memo_uid}})
 MERGE (rec)-[r:published_in]->(mem)

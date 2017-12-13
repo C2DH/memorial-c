@@ -6,7 +6,10 @@ const clc = require('cli-color'),
 
       Eta = require('node-eta'),
       LineByLineReader = require('line-by-line');
-
+/*
+  usage:
+  TASK=store_reports node index.js
+*/
 module.exports = [
   (options, next) => {
     options.c++;
@@ -15,7 +18,12 @@ module.exports = [
     let eta = new Eta(options.settings.store_reports.expected);
 
     let lr = new LineByLineReader(options.settings.store_reports.path);
-    let memorial = {};
+    let memorial = {},
+        types = {
+          'Merged/Joint': 'M',
+          'Translation': 'T',
+          '': 'N' // normal
+        };
 
     eta.start();
 
@@ -25,26 +33,37 @@ module.exports = [
       // pause emitting of lines...
       lr.pause();
       
+      // split line on tab.
+      let lines = line.split('\t')
       // collect lines
-      let match_memorial = line.match(/^(\d{4})\/(.*?)$/),
-          match_reportid = line.match(/^[\d_]+$/);
+      let match_memorial = lines[0].match(/^(\d{4})\/(.*?)$/),
+          match_reportid = lines[0].match(/^[\d\._]+$/);
 
+      if(!match_memorial && !match_reportid){
+        console.log(line)
+        throw 'Pattern for memorial or record id not found. Line is not valid.'
+      }
       // do transition babe.
       if (match_memorial) {
         // was there a previous, different memorial?
-        if(memorial.uid && memorial.uid != match_memorial[2]){
+        if(!memorial.uid) {
+          console.log(_bb('detected FIRST memorial:', _gr(match_memorial[2])));
+        } else if(memorial.uid != match_memorial[2]){
+          console.log(_bb('detected NEW memorial:', _gr(match_memorial[2]), '- flush previous:', _ye(memorial.uid)));
+        
           console.log(_bb('flush memorial report for:', _ye(memorial.uid), '- queries:'), memorial.queue.length)
           // console.log(options.neo4j.queries)
+          // console.log(memorial)
           
           options.neo4j.session.writeTransaction(tx => {
-            memorial.queue.forEach(record_uid => {
-              tx.run(options.neo4j.queries.create_record, {
-              //   record_uid:record_uid
-              // });
-              // tx.run(options.neo4j.queries.merge_relationship_record_memo, {
-                record_uid:record_uid,
+            memorial.queue.forEach(record => {
+              let params = {
+                record_uid:record.uid,
+                type: record.type,
                 memo_uid: memorial.uid
-              });   
+              };
+              
+              tx.run(options.neo4j.queries.create_record, params);   
             })
           }).then(res => {
             console.log(_gr('    v '), _bb('success.',eta.format('{{progress}}/1 eta: {{etah}}, elapsed: {{elapsed}} s')));
@@ -57,18 +76,18 @@ module.exports = [
         memorial.uid   = match_memorial[2]
         memorial.year  = match_memorial[1]
         memorial.queue = []
-
+        // console.log(memorial)
       }
 
-      if(!match_reportid){
-        // company names etc, just skip.
-      } else {
-        if(!memorial.uid){
-          throw 'error error'
-        }
+      if(match_reportid){
         // console.log(_bb('    - add report:'), line, match_reportid[0])
-        memorial.queue.push(match_reportid[0])
-// console.log('go baby go.', match_reportid[0])
+        let type = types[lines[lines.length-1]];
+        if(!type){
+          console.log(line)
+          throw 'type not found'
+        }
+        memorial.queue.push({ uid: match_reportid[0], type: type})
+        // console.log('go baby go.', match_reportid[0])
       }
       eta.iterate()
       lr.resume();

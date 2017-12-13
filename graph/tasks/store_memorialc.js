@@ -18,7 +18,7 @@ module.exports = [
   (files, next) => {
     c++;
     console.log(_ye(`\n${c}. `),_bb(`save nodes according to json files.`))
-    
+    // one memorialc per file.
 
     let q = async.queue((filepath, callback) => {
       let n = {
