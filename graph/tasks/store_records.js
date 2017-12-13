@@ -6,6 +6,8 @@ const clc = require('cli-color'),
 
       Eta = require('node-eta'),
       LineByLineReader = require('line-by-line');
+
+
 /*
   usage:
   TASK=store_reports node index.js
@@ -68,6 +70,8 @@ module.exports = [
           }).then(res => {
             console.log(_gr('    v '), _bb('success.',eta.format('{{progress}}/1 eta: {{etah}}, elapsed: {{elapsed}} s')));
             memorial.queue = []
+            memorial.uid   = match_memorial[2]
+            memorial.year  = match_memorial[1]
             eta.iterate()
             lr.resume();
           }).catch(next)
