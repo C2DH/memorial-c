@@ -10,16 +10,16 @@ const clc = require('cli-color'),
 
 /*
   usage:
-  TASK=store_reports node index.js
+  TASK=store_records node index.js
 */
 module.exports = [
   (options, next) => {
     options.c++;
-    console.log(_ye(`\n${options.c}. `),_bb(`load`),'reports file');
+    console.log(_ye(`\n${options.c}. `),_bb(`load`),'records file');
       
-    let eta = new Eta(options.settings.store_reports.expected);
+    let eta = new Eta(options.settings.store_records.expected);
 
-    let lr = new LineByLineReader(options.settings.store_reports.path);
+    let lr = new LineByLineReader(options.settings.store_records.path);
     let memorial = {},
         types = {
           'Merged/Joint': 'M',
@@ -39,9 +39,9 @@ module.exports = [
       let lines = line.split('\t')
       // collect lines
       let match_memorial = lines[0].match(/^(\d{4})\/(.*?)$/),
-          match_reportid = lines[0].match(/^[\d\._]+$/);
+          match_recordid = lines[0].match(/^[\d\._]+$/);
 
-      if(!match_memorial && !match_reportid){
+      if(!match_memorial && !match_recordid){
         console.log(line)
         throw 'Pattern for memorial or record id not found. Line is not valid.'
       }
@@ -53,7 +53,7 @@ module.exports = [
         } else if(memorial.uid != match_memorial[2]){
           console.log(_bb('detected NEW memorial:', _gr(match_memorial[2]), '- flush previous:', _ye(memorial.uid)));
         
-          console.log(_bb('flush memorial report for:', _ye(memorial.uid), '- queries:'), memorial.queue.length)
+          console.log(_bb('flush memorial record for:', _ye(memorial.uid), '- queries:'), memorial.queue.length)
           // console.log(options.neo4j.queries)
           // console.log(memorial)
           
@@ -61,7 +61,6 @@ module.exports = [
             memorial.queue.forEach(record => {
               let params = {
                 record_uid:record.uid,
-                type: record.type,
                 memo_uid: memorial.uid
               };
               
@@ -75,7 +74,7 @@ module.exports = [
             eta.iterate()
             lr.resume();
           }).catch(next)
-          return;
+          // return;
         }
         memorial.uid   = match_memorial[2]
         memorial.year  = match_memorial[1]
@@ -83,15 +82,15 @@ module.exports = [
         // console.log(memorial)
       }
 
-      if(match_reportid){
-        // console.log(_bb('    - add report:'), line, match_reportid[0])
+      if(match_recordid){
+        // console.log(_bb('    - add record:'), line, match_recordid[0])
         let type = types[lines[lines.length-1]];
         if(!type){
           console.log(line)
           throw 'type not found'
         }
-        memorial.queue.push({ uid: match_reportid[0], type: type})
-        // console.log('go baby go.', match_reportid[0])
+        memorial.queue.push({ uid: match_recordid[0], type: type})
+        // console.log('go baby go.', match_recordid[0])
       }
       eta.iterate()
       lr.resume();
@@ -100,7 +99,7 @@ module.exports = [
 
     lr.on('end', function () {
       // All lines are read, file is closed now.
-      console.log(_bb(`done `),'reports file');
+      console.log(_bb(`done `),'records file');
     
       next(null, options)
     });
