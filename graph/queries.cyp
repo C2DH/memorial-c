@@ -2,12 +2,12 @@
 // only once, set indexes
 CREATE CONSTRAINT ON (mem:memo) ASSERT mem.uid  IS UNIQUE
 CREATE CONSTRAINT ON (rec:record) ASSERT rec.uid  IS UNIQUE
+CREATE CONSTRAINT ON (men:mention) ASSERT men.uid  IS UNIQUE
 
 // name: create_record
 //
-MERGE (rec:record {Project:'memorialc', uid:{record_uid}})
-ON CREATE
-  set rec.type = {type}
+CREATE (rec:record {Project:'memorialc', uid:{record_uid}})
+  SET rec.type = {type}
 WITH rec
 MATCH (mem:memo {Project:'memorialc', uid:{memo_uid}})
 MERGE (rec)-[r:published_in]->(mem)
@@ -28,4 +28,9 @@ MATCH (rec:record {Project:'memorialc', uid:{record_uid}}), (mem:memo {Project:'
 MERGE (rec)-[r:published_in]->(mem)
 RETURN r
 
+// name: create_memo
+//
+CREATE (mem:memo {Project:'memorialc', uid:{memo_uid}})
+  SET mem.year = {year}
+RETURN mem
 

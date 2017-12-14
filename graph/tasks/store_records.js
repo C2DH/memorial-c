@@ -61,7 +61,8 @@ module.exports = [
             memorial.queue.forEach(record => {
               let params = {
                 record_uid:record.uid,
-                memo_uid: memorial.uid
+                memo_uid: memorial.uid,
+                type: record.type
               };
               
               tx.run(options.neo4j.queries.create_record, params);   
@@ -69,14 +70,14 @@ module.exports = [
           }).then(res => {
             console.log(_gr('    v '), _bb('success.',eta.format('{{progress}}/1 eta: {{etah}}, elapsed: {{elapsed}} s')));
             memorial.queue = []
-            memorial.uid   = match_memorial[2]
+            memorial.uid   = match_memorial[1]+'-'+match_memorial[2]
             memorial.year  = match_memorial[1]
             eta.iterate()
             lr.resume();
           }).catch(next)
-          // return;
+          return;
         }
-        memorial.uid   = match_memorial[2]
+        memorial.uid   = match_memorial[1]+'-'+match_memorial[2]
         memorial.year  = match_memorial[1]
         memorial.queue = []
         // console.log(memorial)
@@ -89,7 +90,7 @@ module.exports = [
           console.log(line)
           throw 'type not found'
         }
-        memorial.queue.push({ uid: match_recordid[0], type: type})
+        memorial.queue.push({ uid: memorial.uid+'-'+match_recordid[0], type: type})
         // console.log('go baby go.', match_recordid[0])
       }
       eta.iterate()

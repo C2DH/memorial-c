@@ -1,7 +1,6 @@
 const path = require("path"),
       async     = require("async"),
       fs        = require("fs"),
-      glob      = require("glob"),
       clc       = require('cli-color'),
       decypher  = require('decypher'),
 
@@ -39,6 +38,7 @@ console.log(_bb(`task: ${process.env.TASK}`));
 
 let c = 0;
 
+
 async.waterfall([
   (next) => {
     c++;
@@ -62,7 +62,7 @@ async.waterfall([
   },
 ].concat(tasks), (err) => {
   if(err)
-    console.log(err)
+    console.log('errore',err)
   else
     console.log(_bb(`---\nthat's all folks\n---`));
         
