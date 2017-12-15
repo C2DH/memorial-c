@@ -30,7 +30,7 @@ module.exports = [
 
     lr.on('line', function (line) {
       // pause emitting of lines...
-      // lr.pause();
+      lr.pause();
       
       // split line on tab.
       let lines = line.split('\t')
@@ -41,30 +41,12 @@ module.exports = [
           memo_uid: match_memorial[1]+'-'+match_memorial[2],
           year: match_memorial[1]
         });
+      lr.resume();
     });
 
     lr.on('end', function () {
-      // console.log()
       console.log(_gr('    v '), _bb('success, memorialc:'), queue.length, queue[0]);
-        //eta.format('{{progress}}/1 eta: {{etah}}, elapsed: {{elapsed}} s')));
-      // let eta = new Eta(queue.length);
-      let chunks = chunk(queue, 250);
-      eta = new Eta(50000);
-      console.log(_bb('    expected', _ye(chunks.length), 'chunks of 250 items'));
-      async.eachSeries(chunks, (ch, callback) => {
-        
-        options.neo4j.session.writeTransaction(tx => {
-          console.log(_bb('    processing', _ye(ch.length), 'items'));
-          ch.forEach(memo => {
-            tx.run(options.neo4j.queries.create_memo, memo);
-          });
-        }).then(function(){
-          console.log(_gr('    v '), _bb('success', eta.format('{{progress}}/1 eta: {{etah}}, elapsed: {{elapsed}} s')));
-          eta.iterate();
-          callback()
-        })
-        .catch(callback)
-      }, next);
+      next(null, chunk(queue, 50), options);
     });
 
     
@@ -73,6 +55,29 @@ module.exports = [
     // next()
   }
   },
+  (chunks, options, next) => {
+    options.c++;
+    console.log(_ye(`\n${options.c}. `),_bb('import',_ye(chunks.length), 'of 50 items'));
+    
+    let eta = new Eta(chunks.length);
+    eta.start();
+
+    async.eachSeries(chunks, (ch, callback) => {
+      eta.iterate();
+        
+      options.neo4j.session.writeTransaction(tx => {
+        console.log(_bb('    processing', _ye(ch.length), 'items'));
+        for(var i=0,l=ch.length;i<l;i++){
+          tx.run(options.neo4j.queries.create_memo, ch[i]);
+        };
+      }).then(function(){
+        console.log(_gr('    v '), _bb('success', eta.format('{{progress}}/1 eta: {{etah}}, elapsed: {{elapsed}} s')));
+        // eta.iterate();
+        callback()
+      })
+      .catch(callback)
+    }, next);
+  }
   // (options, files, next) => {
   //   c++;
   //   console.log(_ye(`\n${c}. `),_bb(`save nodes according to json files.`));
