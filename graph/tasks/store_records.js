@@ -47,11 +47,13 @@ module.exports = [
       }
       // do transition babe.
       if (match_memorial) {
+        let _uid  = match_memorial[1]+'-'+match_memorial[2],
+            _year = match_memorial[1];
         // was there a previous, different memorial?
         if(!memorial.uid) {
-          console.log(_bb('detected FIRST memorial:', _gr(match_memorial[2])));
-        } else if(memorial.uid != match_memorial[2]){
-          console.log(_bb('detected NEW memorial:', _gr(match_memorial[2]), '- flush previous:', _ye(memorial.uid)));
+          console.log(_bb('detected FIRST memorial:', _gr(_uid)));
+        } else if(memorial.uid != _uid){
+          console.log(_bb('detected NEW memorial:', _gr(_uid), '- flush previous:', _ye(memorial.uid)));
         
           console.log(_bb('flush memorial record for:', _ye(memorial.uid), '- queries:'), memorial.queue.length)
           // console.log(options.neo4j.queries)
@@ -70,15 +72,15 @@ module.exports = [
           }).then(res => {
             console.log(_gr('    v '), _bb('success.',eta.format('{{progress}}/1 eta: {{etah}}, elapsed: {{elapsed}} s')));
             memorial.queue = []
-            memorial.uid   = match_memorial[1]+'-'+match_memorial[2]
-            memorial.year  = match_memorial[1]
+            memorial.uid   = _uid
+            memorial.year  = _year
             eta.iterate()
             lr.resume();
           }).catch(next)
           return;
         }
-        memorial.uid   = match_memorial[1]+'-'+match_memorial[2]
-        memorial.year  = match_memorial[1]
+        memorial.uid   = _uid
+        memorial.year  = _year
         memorial.queue = []
         // console.log(memorial)
       }

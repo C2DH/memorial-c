@@ -3,11 +3,11 @@
 CREATE CONSTRAINT ON (mem:memo) ASSERT mem.uid  IS UNIQUE
 CREATE CONSTRAINT ON (rec:record) ASSERT rec.uid  IS UNIQUE
 CREATE CONSTRAINT ON (men:mention) ASSERT men.uid  IS UNIQUE
+CREATE CONSTRAINT ON (ent:entity) ASSERT ent.uid  IS UNIQUE
 
 // name: create_record
 //
-CREATE (rec:record {Project:'memorialc', uid:{record_uid}})
-  SET rec.type = {type}
+CREATE (rec:record {Project:'memorialc', uid:{record_uid}, type:{type}})
 WITH rec
 MATCH (mem:memo {Project:'memorialc', uid:{memo_uid}})
 MERGE (rec)-[r:published_in]->(mem)
