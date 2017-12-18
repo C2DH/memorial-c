@@ -34,3 +34,38 @@ CREATE (mem:memo {Project:'memorialc', uid:{memo_uid}})
   SET mem.year = {year}
 RETURN mem
 
+// name: create_location
+//
+MERGE (ent:entity:location {Project:'memorialc', uid:{entity_uid}})
+  ON CREATE SET
+    ent.name = {name}
+WITH ent
+  MATCH (rec:record {Project:'memorialc', uid:{record_uid}})
+  MERGE (ent)-[r:appears_in]->(rec)
+  ON CREATE SET
+    r.splitpoints = {splitpoints}
+RETURN r
+
+// name: create_person
+//
+MERGE (ent:entity:person {Project:'memorialc', uid:{entity_uid}})
+  ON CREATE SET
+    ent.name = {name}
+WITH ent
+  MATCH (rec:record {Project:'memorialc', uid:{record_uid}})
+  MERGE (ent)-[r:appears_in]->(rec)
+  ON CREATE SET
+    r.splitpoints = {splitpoints}
+RETURN r
+
+// name: create_organization
+//
+MERGE (ent:entity:organization {Project:'memorialc', uid:{entity_uid}})
+  ON CREATE SET
+    ent.name = {name}
+WITH ent
+  MATCH (rec:record {Project:'memorialc', uid:{record_uid}})
+  MERGE (ent)-[r:appears_in]->(rec)
+  ON CREATE SET
+    r.splitpoints = {splitpoints}
+RETURN r
