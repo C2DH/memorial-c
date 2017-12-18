@@ -24,8 +24,10 @@ module.exports = [
     
     let lr = new LineByLineReader(options.settings.store_entities.path);
     let queue = [],
-        eta,
+        eta = new Eta(options.settings.store_entities.expected),
         previous_uid;
+
+    eta.start();
 
     function drain(_uid, callback){
       console.log(_bb('detected NEW:', _gr(_uid)));
@@ -46,7 +48,7 @@ module.exports = [
     lr.on('line', function (line) {
       // pause emitting of lines...
       lr.pause();
-
+      eta.iterate();
       // split line on tab.
       let lines = line.split('\t')
       
@@ -79,6 +81,7 @@ module.exports = [
         previous_uid = '' + record_uid;
 
         drain(record_uid, () => {
+          console.log(_gr('    v '), _bb('success.',eta.format('{{progress}}/1 eta: {{etah}}, elapsed: {{elapsed}} s'))); 
           queue = []
           lr.resume()
         });
