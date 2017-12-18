@@ -11,7 +11,8 @@
     "store_entities": "TASK=store_entities node index.js",
     "nohup_store_memos": "TASK=store_memos nohup node index.js > store_memos.log 2>&1 &",
     "nohup_store_records": "TASK=store_records nohup node index.js > store_records.log 2>&1 &",
-    "nohup_store_mentions": "TASK=store_mentions nohup node index.js > store_mentions.log 2>&1 &"
+    "nohup_store_mentions": "TASK=store_mentions nohup node index.js > store_mentions.log 2>&1 &",
+    "nohup_store_entities": "TASK=store_entities nohup node index.js > store_entities.log 2>&1 &",
   },
   "author": "",
   "license": "ISC",
