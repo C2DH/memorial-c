@@ -1,0 +1,24 @@
+{
+  "name": "enterprises",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.6.0",
+    "cli-color": "^1.2.0",
+    "command-line-args": "^5.0.2",
+    "csv-parse": "^2.0.4",
+    "decypher": "^0.13.0",
+    "dotenv": "^5.0.1",
+    "glob": "^7.1.2",
+    "lodash": "^4.17.5",
+    "moment": "^2.21.0",
+    "neo4j-driver": "^1.5.3"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "Association resp. Société civile luxembourgeoise":"ascl",
+  "Association sans but lucratif":"asbl",
+  "Etablissement d'utilité publique":"eup",
+
+  "Société anonyme de droit étranger":"sade",
+  "Société anonyme de droit luxembourgeois":"sad",
+  "Société à responsabilité limitée de droit luxembourgeois":"sarl",
+  "Société à responsabilité limitée de droit étranger":"sare",
+  "Société en commandite simple de droit luxembourgeois":"scsl",
+  "Société holding sous forme de société anonyme":"shsa",
+  "Société holding sous forme de société a responsabilité limitée":"shsr",
+  "Société d'investissement à capital variable":"sicv",
+  "Société en commandite par actions de droit luxembourgeois":"scal",
+
+  "Bilans, mention du dépôt":"bilm",
+  "Bilan et Conseil d'Administration":"bila",
+  "Bilan et Changement adresse":"bilc",
+  "Cession de parts":"ces",
+  "Clôture de liquidation":"liq",
+  "Changement de dénomination":"chan",
+  "Dénonciation de siège":"dens",
+  "Dissolution":"dis",
+  "Forme Juridique":"form",
+  "Fusion":"fusi",
+  "Projet de fusion":"fusp",
+  "Liquidation judiciaire":"leg",
+  "Administrateurs et changement adresse":"acha",
+  "Administrateurs (publications faites en dehors des bilans)":"pub",
+  "Convocations aux assemblées générales":"con",
+  "Diverses autres publications déposées au RC":"misc",
+  "Diverses autres publications non déposées au RC":"misn",
+  
+  "Modifications des statuts":"mod",
+  "Nomination d'un liquidateur":"nliq",
+  "Rectificatif":"rect",
+
+  "Scission définitive":"scis",
+  "Projet de scission":"scip",
+
+  "Statuts coordonnés, mention du dépôt":"stad",
+  "Statuts publiés lors de la constitution":"stac",
+  "Refonte des statuts":"star",
+
+  "Transfert de siège":"chs",
+
+  "":"ND"
+}
