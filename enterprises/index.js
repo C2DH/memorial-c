@@ -8,19 +8,20 @@ const parse = require('csv-parse/lib/sync');
 const async  = require('async');
 const lodash = require('lodash');
 const moment = require('moment');
+const glob = require('glob');
 
 // get commandline argus
 const commandLineArgs = require('command-line-args');
 const options = commandLineArgs([
   { name: 'verbose', alias: 'v', type: Boolean },
   { name: 'src', type: String, multiple: true, defaultOption: true },
-  { name: 'glob', type: String},
-  { name: 'timeout', alias: 't', type: Number}
+  { name: 'glob', alias: 'g',  type: String},
+  { name: 'timeout', alias: 't', type: Number},
+  { name: 'offset', alias: 'o', type: Number}
 ])
 
 // load .env file
 const config = require('dotenv').config();
-console.log(config);
 
 const clc = require("cli-color");
 const _bb = clc.blackBright;
@@ -28,10 +29,13 @@ const _ma = clc.magentaBright;
 const _ye = clc.yellowBright;
 const _gr = clc.greenBright;
 
+
 // neo4j
 if(!process.env.NEO4J_HOST || !process.env.NEO4J_USER || !process.env.NEO4J_PASS){
   throw 'please put proper process.env.NEO4J_HOST, process.env.NEO4J_USER and process.env.NEO4J_PASS...'
 }
+console.log(_ye('NEO4J'), _bb('\n- host:'),config.parsed.NEO4J_HOST, _bb('\n- user:'), process.env.NEO4J_USER, '\n\n');
+
 const neo4j    = require('neo4j-driver').v1;
 const driver   = neo4j.driver(process.env.NEO4J_HOST, neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASS));
 const session  = driver.session()
@@ -40,16 +44,25 @@ const queries  = decypher('./queries.cyp');
 
 // dicss variables...
 const types = require('./types')
+console.log(options)
 
-if(!options.src.length){
-  throw 'bad very bad'
+if(!options.glob){
+  throw 'argument: glob STRING required, remember to put in quotes'
 }
+let files = glob.sync(options.glob);
+if (options.offset){
+  files = lodash.slice(files, options.offset)
+}
+console.log(files.length)
 
 const formatDate = (value) => {
   let date = moment(value.trim(), 'D.M.YYYY');
 
   if(!date.isValid()){
-    throw 'date not valid'
+    console.log(`date not valid: "${value}"`);
+    return {
+      date: 'invalid'
+    }
   }
 
   return {
@@ -134,7 +147,7 @@ const toEnterprise = (data) => {
 
 // iteratee for file. once done, hit callback.
 const iteratee = (item, k, callback) => {
-  console.log(_ye(item), _bb('iteratee'), k);
+  console.log(_ye(item), _bb('iteratee'), k, _bb('/',files.length));
   const contents = fs.readFileSync(item).toString();
   const rows = parse(contents, {delimiter: '\t', quote: false, relax_column_count:true});
   // count tabs. Check file format.
@@ -165,10 +178,12 @@ const iteratee = (item, k, callback) => {
 
   console.log(_bb('-- n.docs:', _ma(`${documents.length}`)));
 
-  console.log(_bb('    '),0,_bb('. uid:  '), documents[0].uid)
-  console.log(_bb('     type:  '), documents[0].type)
-  console.log(_bb('     label: '), documents[0].label)
-  console.log(_bb('     date:  '), documents[0].date)
+  if(documents.length){
+    console.log(_bb('    '),0,_bb('. uid:  '), documents[0].uid)
+    console.log(_bb('     type:  '), documents[0].type)
+    console.log(_bb('     label: '), documents[0].label)
+    console.log(_bb('     date:  '), documents[0].date)
+  }
 
   if(documents.length > 1) {
     let idx = documents.length-1;
@@ -176,6 +191,7 @@ const iteratee = (item, k, callback) => {
     console.log(_bb('     type:  '), documents[idx].type, _bb('/ label:'), documents[idx].label)
     console.log(_bb('     date:  '), documents[idx].date)
   }
+
   setImmediate(callback);
   return;
   console.log(queries.merge_memo)
@@ -206,7 +222,7 @@ const iteratee = (item, k, callback) => {
   //setImmediate(callback);
 }
 
-async.eachOfSeries(options.src, iteratee, (err) => {
+async.eachOfSeries(files, iteratee, (err) => {
   if(err)
     throw err
   else{

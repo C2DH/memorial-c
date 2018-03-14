@@ -13,6 +13,7 @@
     "async": "^2.6.0",
     "cli-color": "^1.2.0",
     "command-line-args": "^5.0.2",
+    "command-line-usage": "^5.0.3",
     "csv-parse": "^2.0.4",
     "decypher": "^0.13.0",
     "dotenv": "^5.0.1",
