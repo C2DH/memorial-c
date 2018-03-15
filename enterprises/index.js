@@ -72,11 +72,13 @@ const formatDate = (value) => {
 }
 
 
+
 const translate = (value, dict) => {
   value = value.trim();
   if(!dict[value]){
     console.log(value, dict)
-    throw `unknown value "${value}" in dict`
+    dict[value] = value;
+    // throw `unknown value "${value}" in dict`
   }
   return dict[value];
 }
@@ -225,6 +227,8 @@ const iteratee = (item, k, callback) => {
 }
 
 async.eachOfSeries(files, iteratee, (err) => {
+  console.log(JSON.stringify(types, null, 2))
+  
   if(err)
     throw err
   else{
