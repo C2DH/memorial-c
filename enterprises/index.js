@@ -147,12 +147,14 @@ const toEnterprise = (data) => {
 
 // iteratee for file. once done, hit callback.
 const iteratee = (item, k, callback) => {
-  console.log(_ye(item), _bb('iteratee'), k, _bb('/',files.length));
   const contents = fs.readFileSync(item).toString();
   const rows = parse(contents, {delimiter: '\t', quote: false, relax_column_count:true});
   // count tabs. Check file format.
   const is_multititle = rows[0].length < 4;
 
+  console.log(_ye(item), _bb('iteratee'), k, _bb('/',files.length));
+  console.log(_bb('- is_multititle:'), is_multititle, _bb('\n- n. rows:'),rows.length)
+  console.log(_bb('- first row:', rows[0]))
   // first line: identifier
   let enterprise = is_multititle? toEnterprise(rows[0]): {
     uid: rows[0][2],
