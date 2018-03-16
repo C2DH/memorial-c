@@ -44,6 +44,7 @@ const queries  = decypher('./queries.cyp');
 
 // dicss variables...
 const types = require('./types')
+types.count = {}
 console.log(options)
 
 if(!options.glob){
@@ -75,10 +76,12 @@ const formatDate = (value) => {
 
 const translate = (value, dict) => {
   value = value.trim();
+  dict.count[value] = (dict.count[value] || 0 ) + 1;
   if(!dict[value]){
     console.log(value, dict)
-    dict[value] = value;
-    // throw `unknown value "${value}" in dict`
+
+    //dict[value] = (dict[value] || 0) + 1;
+    throw `unknown value "${value}" in dict`
   }
   return dict[value];
 }
@@ -196,9 +199,7 @@ const iteratee = (item, k, callback) => {
     console.log(_bb('     date:  '), documents[idx].date)
   }
 
-  setImmediate(callback);
-  return;
-  console.log(queries.merge_memo)
+  
   session.writeTransaction(tx => {
     console.log(_bb('    processing items'));
 
