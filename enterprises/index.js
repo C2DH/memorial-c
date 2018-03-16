@@ -62,6 +62,7 @@ const formatDate = (value) => {
   if(!date.isValid()){
     console.log(`date not valid: "${value}"`);
     return {
+      t: value.trim(),
       date: 'invalid'
     }
   }
@@ -199,7 +200,7 @@ const iteratee = (item, k, callback) => {
     console.log(_bb('     date:  '), documents[idx].date)
   }
 
-  
+
   session.writeTransaction(tx => {
     console.log(_bb('    processing items'));
 
@@ -229,7 +230,7 @@ const iteratee = (item, k, callback) => {
 
 async.eachOfSeries(files, iteratee, (err) => {
   console.log(JSON.stringify(types, null, 2))
-  
+
   if(err)
     throw err
   else{
